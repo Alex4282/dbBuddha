@@ -1,0 +1,15 @@
+# Backend
+__pycache__/
+*.pyc
+.env
+.venv/
+.pgdata/
+.github_sync_state.json
+
+# Frontend
+node_modules/
+.next/
+.env.local
+
+# OS
+.DS_Store

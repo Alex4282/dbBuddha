@@ -1,0 +1,35 @@
+version: "3.9"
+
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: nexusmind-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: nexusmind
+      POSTGRES_PASSWORD: nexusmind
+      POSTGRES_DB: nexusmind
+    ports:
+      - "5432:5432"
+    volumes:
+      - nexusmind_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nexusmind"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: .
+    container_name: nexusmind-api
+    restart: unless-stopped
+    env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+volumes:
+  nexusmind_pgdata:
